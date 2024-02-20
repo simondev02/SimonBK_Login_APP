@@ -1,0 +1,57 @@
+definitions:
+  swagger.LoginForm:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      userNameApp:
+        type: string
+    type: object
+  views.Response:
+    properties:
+      accessToken:
+        type: string
+      failedAttempts:
+        type: integer
+      message:
+        type: string
+      refreshToken:
+        type: string
+      success:
+        type: boolean
+    type: object
+info:
+  contact: {}
+paths:
+  /appUser/:
+    post:
+      consumes:
+      - application/json
+      description: Autentica a un usuario y devuelve un token de acceso y los detalles
+        del usuario.
+      parameters:
+      - description: Credenciales del usuario
+        in: body
+        name: login
+        required: true
+        schema:
+          $ref: '#/definitions/swagger.LoginForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Respuesta exitosa con token y detalles del usuario
+          schema:
+            $ref: '#/definitions/views.Response'
+        "400":
+          description: 'Error: Datos inválidos o problema con el formato del email'
+        "401":
+          description: 'Error: Credenciales incorrectas o intento de inicio de sesión
+            fallido'
+        "500":
+          description: Error interno del servidor
+      summary: Iniciar sesión
+      tags:
+      - autenticación
+swagger: "2.0"
