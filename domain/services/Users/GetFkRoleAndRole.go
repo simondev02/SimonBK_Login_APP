@@ -3,13 +3,13 @@ package services
 import "gorm.io/gorm"
 
 type UserRole struct {
-	FkRole *uint   `json:"fkRole"`
+	Fkrole *uint   `json:"fkrole"`
 	Role   *string `json:"role"`
 }
 
 func GetUserRoleByID(db *gorm.DB, id uint) (*UserRole, error) {
 	var userRole UserRole
-	err := db.Raw(`SELECT roles.id AS FkRole, roles.role_description AS Role 
+	err := db.Raw(`SELECT roles.id AS fkrole, roles.role_description AS role 
 	FROM users 
 	INNER JOIN user_roles ON user_roles.fk_user = users.id 
 	INNER JOIN roles ON roles.id = user_roles.fk_role 

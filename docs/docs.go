@@ -15,7 +15,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/appUser/": {
+        "/login/userApp/": {
             "post": {
                 "description": "Autentica a un usuario y devuelve un token de acceso y los detalles del usuario.",
                 "consumes": [
@@ -25,7 +25,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "autenticación"
+                    "appUser"
                 ],
                 "summary": "Iniciar sesión",
                 "parameters": [
@@ -57,9 +57,74 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/userApp/create/": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Añade un nuevo usuario de aplicación a la base de datos",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "appUser"
+                ],
+                "summary": "Crea un nuevo usuario de aplicación",
+                "parameters": [
+                    {
+                        "description": "AplicationUser",
+                        "name": "vehiculo",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/swagger.AplicationUser"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ID o mensaje de éxito del AplicationUser creado",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "swagger.AplicationUser": {
+            "type": "object",
+            "properties": {
+                "userNameapp": {
+                    "type": "string"
+                }
+            }
+        },
         "swagger.LoginForm": {
             "type": "object",
             "properties": {
@@ -94,14 +159,21 @@ const docTemplate = `{
                 }
             }
         }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
     }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "",
+	Version:          "1",
 	Host:             "",
-	BasePath:         "",
+	BasePath:         "/userApp",
 	Schemes:          []string{},
 	Title:            "",
 	Description:      "",

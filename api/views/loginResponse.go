@@ -1,9 +1,10 @@
 package views
 
 type Response struct {
-	Success        bool   `json:"success"`
-	FailedAttempts int    `json:"failedAttempts"`
-	AccessToken    string `json:"accessToken"`
-	RefreshToken   string `json:"refreshToken"`
-	Message        string `json:"message"`
+	Success        bool    `json:"success"`
+	FailedAttempts *int    `json:"failedAttempts"`
+	AccessToken    *string `json:"accessToken"`
+	RefreshToken   *string `json:"refreshToken"`
+	Message        *string `json:"message"`
+	Users          *Users  `json:"users"`
 }

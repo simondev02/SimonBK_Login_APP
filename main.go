@@ -1,3 +1,10 @@
+// @API Usiarios Aplicativos
+// Queremos crear una API para gestionar los usuarios  aplicativo.
+// @version 1
+// @BasePath /userApp
+// @SecurityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 package main
 
 import (

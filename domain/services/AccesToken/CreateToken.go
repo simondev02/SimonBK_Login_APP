@@ -9,20 +9,12 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
-type CustomClaims struct {
-	jwt.StandardClaims
-	UserId     *uint `json:"userId"`
-	RoleId     *uint `json:"roleId"`
-	FkCompany  *uint `json:"fk_company"`
-	FkCustomer *uint `json:"fk_customer"`
-}
-
-func GenerateAccessToken(user views.Users) (string, error) {
+func GenerateAccessToken(user *views.Users) (*string, error) {
 	jwtKey := os.Getenv("JWT_KEY")
 	expirationTime := time.Now().Add(24 * time.Hour)
 	idStr := strconv.FormatUint(uint64(user.ID), 10)
 
-	claims := &CustomClaims{
+	claims := views.CustomClaims{
 		StandardClaims: jwt.StandardClaims{
 			Subject:   idStr,
 			ExpiresAt: expirationTime.Unix(),
@@ -35,7 +27,7 @@ func GenerateAccessToken(user views.Users) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString([]byte(jwtKey))
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return tokenString, nil
+	return &tokenString, nil
 }

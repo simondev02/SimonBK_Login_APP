@@ -8,8 +8,8 @@ import (
 	"gorm.io/gorm"
 )
 
-func GetUserByEmail(db *gorm.DB, email string) (*views.Users, error) {
-	var userModel models.Users
+func GetUserByEmail(db *gorm.DB, email *string) (*views.Users, error) {
+	var userModel *models.Users
 	if err := db.Where("email = ?", email).First(&userModel).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("usuario no encontrado")
@@ -37,7 +37,7 @@ func GetUserByEmail(db *gorm.DB, email string) (*views.Users, error) {
 		Email:          userModel.Email,
 		Name:           contactName.Name,
 		Lastname:       contactName.LastName,
-		FkRole:         userRole.FkRole,
+		FkRole:         userRole.Fkrole,
 		Role:           userRole.Role,
 		Login_attempts: userModel.Login_attempts,
 		Last_login:     userModel.Last_login,

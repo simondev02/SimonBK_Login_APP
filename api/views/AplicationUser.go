@@ -1,15 +1,11 @@
-package models
-
-import "gorm.io/gorm"
+package views
 
 type AplicationUser struct {
-	gorm.Model
+	Id          *uint
 	UserNameApp *string `gorm:"unique;not null" json:"userNameApp"`
 	Password    string  `json:"password"`
 	FkCompany   *uint   `json:"fkCompany"`
 	FkCustomer  *uint
-	DeletedBy   *uint
 	UpdatedBy   *uint
 	CreatedBy   *uint
-	Comnpay     Company `gorm:"foreignKey:FkCompany"`
 }

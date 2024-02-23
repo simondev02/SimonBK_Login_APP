@@ -12,7 +12,7 @@ import (
 // Login godoc
 // @Summary Iniciar sesión
 // @Description Autentica a un usuario y devuelve un token de acceso y los detalles del usuario.
-// @Tags autenticación
+// @Tags appUser
 // @Accept  json
 // @Produce  json
 // @Param   login  body  swagger.LoginForm  true  "Credenciales del usuario"
@@ -20,28 +20,24 @@ import (
 // @Failure 400 "Error: Datos inválidos o problema con el formato del email"
 // @Failure 401 "Error: Credenciales incorrectas o intento de inicio de sesión fallido"
 // @Failure 500 "Error interno del servidor"
-// @Router /appUser/ [post]
+// @Router /login/userApp/ [post]
 func HandleUser(c *gin.Context) {
-
 	var input views.LoginForm
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	user, match, token, err := services.HandleUser(db.DBConn, *input.UserNameApp, *input.Email, *input.Password)
+	loginResponse, err := services.HandleUser(db.DBConn, input.UserNameApp, input.Email, input.Password)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	if !match {
+	if !loginResponse.Success {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "password does not match"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"user":  user,
-		"token": token,
-	})
+	c.JSON(http.StatusOK, loginResponse)
 }

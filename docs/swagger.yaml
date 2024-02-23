@@ -1,4 +1,10 @@
+basePath: /userApp
 definitions:
+  swagger.AplicationUser:
+    properties:
+      userNameapp:
+        type: string
+    type: object
   swagger.LoginForm:
     properties:
       email:
@@ -23,8 +29,9 @@ definitions:
     type: object
 info:
   contact: {}
+  version: "1"
 paths:
-  /appUser/:
+  /login/userApp/:
     post:
       consumes:
       - application/json
@@ -53,5 +60,46 @@ paths:
           description: Error interno del servidor
       summary: Iniciar sesión
       tags:
-      - autenticación
+      - appUser
+  /userApp/create/:
+    post:
+      consumes:
+      - application/json
+      description: Añade un nuevo usuario de aplicación a la base de datos
+      parameters:
+      - description: AplicationUser
+        in: body
+        name: vehiculo
+        required: true
+        schema:
+          $ref: '#/definitions/swagger.AplicationUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ID o mensaje de éxito del AplicationUser creado
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Crea un nuevo usuario de aplicación
+      tags:
+      - appUser
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

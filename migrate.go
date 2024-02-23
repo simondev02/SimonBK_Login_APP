@@ -7,13 +7,13 @@ import (
 	"log"
 )
 
-func RunMigrations() {
+func Runmigrate() {
 	err := db.ConnectDB()
 	if err != nil {
 		log.Fatalf("Could not connect to DB: %v", err)
 	}
 	// Migrar las tablas
-	err = db.DBConn.AutoMigrate(&models.AplicationUser{}) // Primero, la tabla "compania"
+	err = db.DBConn.AutoMigrate(&models.Login{}) // Primero, la tabla "compania"
 	if err != nil {
 		log.Fatalf("Failed to migrate table Compania: %v", err)
 	}
