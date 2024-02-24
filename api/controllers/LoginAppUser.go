@@ -21,14 +21,15 @@ import (
 // @Failure 401 "Error: Credenciales incorrectas o intento de inicio de sesión fallido"
 // @Failure 500 "Error interno del servidor"
 // @Router /login/userApp/ [post]
-func HandleUser(c *gin.Context) {
+func LoginUserApp(c *gin.Context) {
+
 	var input views.LoginForm
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	loginResponse, err := services.HandleUser(db.DBConn, input.UserNameApp, input.Email, input.Password)
+	loginResponse, err := services.LoginUserApp(db.DBConn, input.UserNameApp, input.Email, input.Password)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

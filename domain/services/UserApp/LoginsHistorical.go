@@ -3,6 +3,8 @@ package services
 import (
 	"SimonBK_Login_APP/domain/models"
 	"SimonBK_Login_APP/infra/db"
+	"errors"
+	"log"
 )
 
 func CreateLogin(userId *uint, ip *string, agent *string, success *bool) error {
@@ -15,7 +17,8 @@ func CreateLogin(userId *uint, ip *string, agent *string, success *bool) error {
 
 	err := db.DBConn.Create(&Login)
 	if err.Error != nil {
-		return err.Error
+		log.Print("[CreateLogin] - Error al crear historico de login")
+		return errors.New("error al crear historico de login")
 	}
 
 	return nil

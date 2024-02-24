@@ -4,12 +4,12 @@ import "gorm.io/gorm"
 
 type AplicationUser struct {
 	gorm.Model
-	UserNameApp *string `gorm:"unique;not null" json:"userNameApp"`
-	Password    string  `json:"password"`
-	FkCompany   *uint   `json:"fkCompany"`
+	UserNameApp *string
+	Password    string
+	FkCompany   *uint
 	FkCustomer  *uint
 	DeletedBy   *uint
 	UpdatedBy   *uint
 	CreatedBy   *uint
-	Comnpay     Company `gorm:"foreignKey:FkCompany"`
+	Company     Company `gorm:"foreignKey:FkCompany"`
 }

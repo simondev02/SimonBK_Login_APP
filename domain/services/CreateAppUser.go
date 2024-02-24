@@ -4,33 +4,41 @@ import (
 	services "SimonBK_Login_APP/domain/services/Login"
 	UserApp "SimonBK_Login_APP/domain/services/UserApp"
 	"SimonBK_Login_APP/infra/db"
-	"fmt"
+	"log"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
-func CreateUserApp(UserNameApp *string, FkCompany *uint, FkCustomer *uint) (string, error) {
+func CreateUserApp(UserNameApp *string, FkCompany *uint, ParamCompany *uint) (string, error) {
 
-	// 1 . Validar UserNameApp
-	if UserNameApp == nil || len(*UserNameApp) < 5 {
-		return "", fmt.Errorf("el nombre de usuario no puede ser nulo y debe tener al menos 5 caracteres")
-	}
-
-	// 2 . generamos una contraseña aleatoria
-	password := services.GeneratePassword()
-
-	// 3 . Ciframos la contraseña
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	// 1. Validamos jerarquia Solo Ususarios Simon pueden crerar
+	err := UserApp.ValidateHierarchy(FkCompany)
 	if err != nil {
-		// Manejar el error
-		fmt.Println("Error al cifrar la contraseña:", err)
+		log.Print("[CreateUser]")
 		return "", err
 	}
 
-	// 4 . Creacion de usuario aplicacion
-	UserApp.CreateAplicationUser(db.DBConn, UserNameApp, string(hashedPassword), FkCompany, FkCustomer)
+	// 2 . Validamos el nombre de usuario
+	err = UserApp.ValidateUserNameApp(UserNameApp)
 	if err != nil {
-		fmt.Println(err)
+		log.Print("[CreateUserApp]")
+		return "", err
+	}
+
+	// 3 . generamos una contraseña aleatoria
+	password := services.GeneratePassword()
+
+	// 4 . Ciframos la contraseña
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		log.Println("[CreateUserApp]")
+		return "", err
+	}
+
+	// 5 . Creacion de usuario aplicacion
+	UserApp.CreateAplicationUser(db.DBConn, UserNameApp, string(hashedPassword), ParamCompany)
+	if err != nil {
+		log.Print("[CreateUserApp]")
 		return "", err
 	}
 	return password, nil

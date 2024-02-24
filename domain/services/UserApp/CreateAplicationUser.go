@@ -2,22 +2,23 @@ package services
 
 import (
 	"SimonBK_Login_APP/domain/models"
-	"fmt"
+	"errors"
+	"log"
 
 	"gorm.io/gorm"
 )
 
-func CreateAplicationUser(db *gorm.DB, UserNameApp *string, HashedPassword string, FkCompany *uint, FkCustomer *uint) (*models.AplicationUser, interface{}) {
+func CreateAplicationUser(db *gorm.DB, UserNameApp *string, HashedPassword string, FkCompany *uint) (string, string, error) {
 	user := &models.AplicationUser{
 		UserNameApp: UserNameApp,
 		Password:    HashedPassword,
 		FkCompany:   FkCompany,
-		FkCustomer:  FkCustomer,
 	}
 
 	if err := db.Create(user).Error; err != nil {
-		return nil, fmt.Errorf("[CreateAplicationUser]-Error en la creacion del Usuario: %w", err)
+		log.Print("[CreateAplicationUser] - Error en la creacion del ususario")
+		return "", "", errors.New("error en la creacion del ususario")
 	}
 
-	return user, "Creación de usuario exitosa"
+	return user.Password, "Creación de usuario exitosa", nil
 }

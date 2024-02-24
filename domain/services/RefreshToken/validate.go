@@ -4,6 +4,7 @@ import (
 	"SimonBK_Login_APP/domain/models"
 	"SimonBK_Login_APP/infra/db"
 	"errors"
+	"log"
 	"time"
 
 	"gorm.io/gorm"
@@ -23,6 +24,7 @@ func ValidateRefreshToken(param interface{}) (*uint, error) {
 	}
 	if Query.Error != nil {
 		if errors.Is(Query.Error, gorm.ErrRecordNotFound) {
+			log.Print("[ValidateRefreshToken] - Refresh token no encontrado")
 			return nil, errors.New("refresh token no encontrado")
 		}
 		return nil, Query.Error
@@ -30,6 +32,7 @@ func ValidateRefreshToken(param interface{}) (*uint, error) {
 
 	curentTime := time.Now()
 	if RefreshToken.ExpiryDate.Before(curentTime) {
+		log.Print("[ValidaterefreshToken] - Token expirado")
 		return nil, errors.New("token expirado")
 	}
 	return RefreshToken.FkUser, nil

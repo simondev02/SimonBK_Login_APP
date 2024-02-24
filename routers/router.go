@@ -19,7 +19,7 @@ func SetupRouter() *gin.Engine {
 	// Rutas para el modelo Usuario
 	auth := r.Group("/login")
 	{
-		auth.POST("/userApp/", controllers.HandleUser)
+		auth.POST("/userApp/", controllers.LoginUserApp)
 	}
 
 	// Rutas para Usuario aplicación
@@ -28,7 +28,11 @@ func SetupRouter() *gin.Engine {
 		// Aplicar el middleware de validación de token solo a este grupo
 		auth.Use(middleware.ValidateTokenMiddleware())
 		auth.POST("/create/", controllers.CreateUserAppController)
+		auth.GET("/", controllers.GetAllAppUserController)
+		auth.PUT("/", controllers.UpdateAppUserController)
 	}
 
 	return r
 }
+
+//

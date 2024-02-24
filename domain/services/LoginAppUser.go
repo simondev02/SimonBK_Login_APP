@@ -7,21 +7,17 @@ import (
 	RefreshToken "SimonBK_Login_APP/domain/services/RefreshToken"
 	UserApp "SimonBK_Login_APP/domain/services/UserApp"
 	Users "SimonBK_Login_APP/domain/services/Users"
-	"fmt"
 
 	"gorm.io/gorm"
 )
 
-func HandleUser(db *gorm.DB, userNameApp *string, username *string, password string) (*views.Response, error) {
-
-	fmt.Append([]byte(password))
+func LoginUserApp(db *gorm.DB, userNameApp *string, username *string, password string) (*views.Response, error) {
 
 	// 1. Validamos que el usuario de aplicación exista y retorna password cifrado.
-	hashPassword, idUser, err := UserApp.GetPasswordForUserNameApp(db, userNameApp)
+	hashPassword, idUser, FkCompanyApp, err := UserApp.GetUserApp(db, userNameApp)
 	if err != nil {
 		return nil, err
 	}
-	fmt.Appendln([]byte(hashPassword))
 
 	// 2. Comparamos la contraseña ingresada con la contraseña cifrada almacenada.
 	match, err := Login.ComparePasswords(hashPassword, password)
@@ -34,31 +30,32 @@ func HandleUser(db *gorm.DB, userNameApp *string, username *string, password str
 	if err != nil {
 		return nil, err
 	}
+	// 4. Validamos jerarquia entre UserApp y useName
+	err = Login.ValidateHierarchyCompany(user.FkCompany, FkCompanyApp)
+	if err != nil {
+		return nil, err
+	}
 
-	// 4. Generamos el token de acceso.
+	// 5. Generamos el token de acceso.
 	token, err := Token.GenerateAccessToken(user)
 	if err != nil {
 		return nil, err
 	}
 
-	// 5. Generamos el tokenrefresh
+	// 6. Generamos el tokenrefresh
 	refreshToken, err := RefreshToken.GenerateRefreshToken(idUser)
 	if err != nil {
 		return nil, err
 	}
-
-	message := "Inicio de sesión exitoso"
 
 	response := views.Response{
 		Success:        match,
 		FailedAttempts: nil,
 		AccessToken:    token,
 		RefreshToken:   refreshToken,
-		Message:        &message,
+		Message:        "Inicio de sesión exitoso",
 		Users:          user,
 	}
 
-	// Puedes establecer los otros campos de Response según sea necesario.
-
-	return &response, nil
+	return &response, err
 }
