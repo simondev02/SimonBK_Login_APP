@@ -29,7 +29,7 @@ func SetupRouter() *gin.Engine {
 		auth.Use(middleware.ValidateTokenMiddleware())
 		auth.POST("/create/", controllers.CreateUserAppController)
 		auth.GET("/", controllers.GetAllAppUserController)
-		auth.PUT("/", controllers.UpdateAppUserController)
+		auth.PUT("/:id", controllers.UpdateAppUserController)
 	}
 
 	return r
